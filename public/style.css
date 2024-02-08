@@ -1,6 +1,10 @@
 #link-to-css {
     color: red;
 }
+.navbar-nav me-auto mb-2 mb-lg-0 .nav-item .nav-link active{
+  color: white;
+
+}
 .search {
     display: flex;
     align-items: center;
