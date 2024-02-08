@@ -60,24 +60,11 @@ app.get('/api/users', (req, res) => {
     res.json(results);
   });
 });
-// Middleware để xử lý yêu cầu POST từ form đăng nhập
 app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  
-  // Thực hiện truy vấn để kiểm tra đăng nhập
-  connection.query('SELECT * FROM khachhang WHERE username = TenĐN  AND password = MK', [username, password], (err, results) => {
-    if (err) {
-      console.error('Error querying database:', err);
-      res.status(500).json({ error: 'Error querying database' });
-      return;
-    }
+  // Xử lý đăng nhập ở đây
 
-    if (results.length > 0) {
-      res.send('Login successful');
-    } else {
-      res.send('Invalid username or password');
-    }
-  });
+  // Sau khi xử lý đăng nhập thành công, chuyển hướng người dùng đến trang index
+  res.redirect('/public/index');
 });
 
 
