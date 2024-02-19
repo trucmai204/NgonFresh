@@ -2,6 +2,8 @@ const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const mysql = require('mysql2');
+const bodyParser = require('body-parser');
+const session = require('express-session');
 const app = express();
 const port = 5000;
 
@@ -27,22 +29,7 @@ connection.connect((err) => {
 
   console.log('Đã kết nối thành công đến MySQL');
 });
-// Dữ liệu mới để thêm vào cơ sở dữ liệu
-const newData = {
-  TenKH: 'TenKH',
-  Email: 'Email',
-  MK: 'MK',
-  // Thêm các trường và giá trị khác tùy thuộc vào cấu trúc bảng của bạn
-};
 
-// Câu truy vấn tự động để thêm dữ liệu vào cơ sở dữ liệu
-const query = connection.query('INSERT INTO khachhang SET ?', newData, (err, results) => {
-  if (err) {
-    console.error('Lỗi khi thêm dữ liệu:', err);
-    throw err;
-  }
-  console.log('Dữ liệu đã được thêm thành công vào cơ sở dữ liệu!');
-});
 // Middleware để xử lý dữ liệu từ form
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -52,18 +39,32 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Route để lấy danh sách người dùng
-app.get('/api/users', (req, res) => {
-  connection.query('SELECT * FROM users', (err, results) => {
+
+// Đăng nhập
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Tài khoản hoặc mật khẩu bị trống' });
+  }
+
+  connection.query('SELECT * FROM khachhang WHERE TenKH = ? AND MK = ?', [username, password], (err, results) => {
     if (err) {
-      console.error('Error querying database:', err);
-      res.status(500).json({ error: 'Error querying database' });
-      return;
+      console.error('Lỗi truy vấn:', err);
+      return res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
-    res.json(results);
+
+    if (results.length === 0) {
+      return res.status(401).json({ error: 'Tài khoản không tồn tại hoặc mật khẩu không đúng' });
+    }
+    const user = results[0]; // Lấy thông tin người dùng đầu tiên từ kết quả truy vấn
+
+    // Trả về thông tin người dùng và chuyển hướng đến trang chủ
+    res.status(200).json({ username: user.TenKH }); // Trả về tên người dùng
+    // Redirect ở đây
+    res.redirect('/index.html');
   });
 });
-
 // Đăng ký người dùng
 app.post('/register', async (req, res, next) => {
   const { fullName, email, password } = req.body;
@@ -81,14 +82,6 @@ app.post('/register', async (req, res, next) => {
     res.redirect('/login');
   });
   next();
-});
-
-
-// Đăng nhập (cần cải tiến để xử lý đăng nhập)
-app.post('/login', (req, res) => {
-  // Xử lý đăng nhập ở đây
-  // Sau khi xử lý đăng nhập thành công, chuyển hướng người dùng đến trang index
-  res.redirect('/index.html');
 });
 
 
