@@ -78,34 +78,40 @@
               <form class="d-flex" role="search">
                 <button type="button" class="btn btn-outline-success" style="color: white" type="submit">
                     <a href="control/login.html" style="color: white;  text-decoration: none; font-weight: bold">Đăng nhập</a>
+                  </button>
+                  <span id="username"></span>
+              </form>
                     <script>
                       window.onload = async () => {
-                          // Gửi yêu cầu đăng nhập
-                          const response = await fetch('/login', {
-                              method: 'POST',
-                              headers: {
-                                  'Content-Type': 'application/json'
-                              },
-                              body: JSON.stringify({
-                                  username: 'your_username',
-                                  password: 'your_password'
-                              })
-                          });
-                  
-                          const data = await response.json();
-                          if (response.status === 200) {
-                              // Hiển thị tên người dùng
-                              const username = data.username;
-                              const greetingElement = document.getElementById('greeting');
-                              greetingElement.innerText = `Xin chào, ${username}`;
-                          } else {
-                              // Xử lý lỗi đăng nhập
-                              alert(data.error);
-                          }
+                        // Gửi yêu cầu đăng nhập
+                        const response = await fetch('/login', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({
+                            username: 'your_username',
+                            password: 'your_password'
+                          })
+                        });
+                    
+                        const data = await response.json();
+                        if (response.status === 200) {
+                          // Hiển thị tên người dùng
+                          const username = data.username;
+                          const greetingElement = document.getElementById('greeting');
+                          greetingElement.innerText = `Xin chào, ${username}`;
+                        } else {
+                          // Xử lý lỗi đăng nhập
+                          const error = data.error;
+                          const errorElement = document.getElementById('error');
+                          errorElement.innerText = error;
+                        }
                       };
-                  </script>
+                    </script>
+                    
                   
-              </form>
+              
             </div>
           </div>
         </nav>

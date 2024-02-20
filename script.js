@@ -54,16 +54,11 @@ app.post('/login', (req, res) => {
       return res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
 
-    if (results.length === 0) {
-      return res.status(401).json({ error: 'Tài khoản không tồn tại hoặc mật khẩu không đúng' });
-    }
-    const user = results[0]; // Lấy thông tin người dùng đầu tiên từ kết quả truy vấn
-
-    // Trả về thông tin người dùng và chuyển hướng đến trang chủ
-    res.status(200).json({ username: user.TenKH }); // Trả về tên người dùng
+    
     // Redirect ở đây
     res.redirect('/index.html');
   });
+  
 });
 // Đăng ký người dùng
 app.post('/register', async (req, res, next) => {
