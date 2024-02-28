@@ -27,7 +27,36 @@
                     <button type="submit" class="btn btn-primary">Đăng nhập</button>
                     <button type="submit" class="btn btn-success "><a style="color: white; text-decoration: none;" href="register.html">Đăng Ký</a></button>
                 </div>
-            
+                <script>
+                    function submitLoginForm() {
+                        const username = document.getElementById('TenKH').value;
+                        const password = document.getElementById('MK').value;
+                        console.log("check");
+                        fetch('http://localhost:5000/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                username: username,
+                                password: password
+                            })
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log("Login sucessfully");
+                                window.location.href = '/public/index.html';
+                            } else {
+                                alert("Sai tài khoản hoặc mật khẩu")
+                                throw new Error('Đăng nhập không thành công');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Lỗi:', error);
+                            // Xử lý lỗi tại đây (hiển thị thông báo lỗi cho người dùng, vv.)
+                        });
+                    }
+                </script>
             </form>
             <script src="script.js"></script>
             <script

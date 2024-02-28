@@ -29,6 +29,12 @@ connection.connect((err) => {
 
   console.log('Đã kết nối thành công đến MySQL');
 });
+// Thiết lập session middleware
+app.use(session({
+  secret: 'my-secret-key',
+  resave: false,
+  saveUninitialized: true
+}));
 
 // Middleware để xử lý dữ liệu từ form
 app.use(express.urlencoded({ extended: true }));
@@ -43,7 +49,7 @@ app.get('/', (req, res) => {
 // Đăng nhập
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
-
+  loggedInUser = username;
   if (!username || !password) {
     return res.status(400).json({ error: 'Tài khoản hoặc mật khẩu bị trống' });
   }
@@ -53,13 +59,22 @@ app.post('/login', (req, res) => {
       console.error('Lỗi truy vấn:', err);
       return res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
-
-    
-    // Redirect ở đây
-    res.redirect('/index.html');
+    if (results.length > 0) {
+      // Nếu đăng nhập thành công, chuyển hướng đến trang chủ
+      res.redirect('/index.html');
+      
+    } else {
+      res.status(401).json({ error: 'Tài khoản hoặc mật khẩu không chính xác' });
+    }
   });
   
 });
+// Endpoint để lấy thông tin người dùng
+app.get('/user', authenticate, (req, res) => {
+  // Trả về thông tin người dùng từ phiên làm việc
+  res.json(req.session.user);
+});
+
 // Đăng ký người dùng
 app.post('/register', async (req, res, next) => {
   const { fullName, email, password } = req.body;
@@ -76,7 +91,6 @@ app.post('/register', async (req, res, next) => {
     console.log("Chèn bản ghi mới vào bảng khachhang");
     res.redirect('/login');
   });
-  next();
 });
 
 
