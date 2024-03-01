@@ -6,11 +6,13 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const app = express();
 const port = 5000;
-
+const users = [];
 // http logger
 app.use(morgan('combined'));
 
-app.use(express.static('public'));
+// Middleware để xử lý dữ liệu từ form
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Tạo kết nối đến cơ sở dữ liệu MySQL
 const connection = mysql.createConnection({
@@ -29,6 +31,7 @@ connection.connect((err) => {
 
   console.log('Đã kết nối thành công đến MySQL');
 });
+
 // Thiết lập session middleware
 app.use(session({
   secret: 'my-secret-key',
@@ -36,25 +39,27 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// Middleware để xử lý dữ liệu từ form
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+// Middleware để phục vụ các tệp tĩnh
+const staticOptions = {
+  dotfiles: 'ignore',
+  extensions: ['htm', 'html'],
+  index: false
+};
+app.use(express.static('public', staticOptions));
 
 // Trang chủ
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-
 // Đăng nhập
-app.post('/login', (req, res) => {
+app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
-  loggedInUser = username;
   if (!username || !password) {
     return res.status(400).json({ error: 'Tài khoản hoặc mật khẩu bị trống' });
   }
 
-  connection.query('SELECT * FROM khachhang WHERE TenKH = ? AND MK = ?', [username, password], (err, results) => {
+  connection.query('SELECT * FROM khachhang WHERE TenKhachHang = ? AND Password = ?', [username, password], (err, results) => {
     if (err) {
       console.error('Lỗi truy vấn:', err);
       return res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
@@ -62,40 +67,50 @@ app.post('/login', (req, res) => {
     if (results.length > 0) {
       // Nếu đăng nhập thành công, chuyển hướng đến trang chủ
       res.redirect('/index.html');
-      
     } else {
       res.status(401).json({ error: 'Tài khoản hoặc mật khẩu không chính xác' });
     }
   });
-  
-});
-// Endpoint để lấy thông tin người dùng
-app.get('/user', authenticate, (req, res) => {
-  // Trả về thông tin người dùng từ phiên làm việc
-  res.json(req.session.user);
 });
 
-// Đăng ký người dùng
-app.post('/register', async (req, res, next) => {
-  const { fullName, email, password } = req.body;
+// API endpoint để đăng ký người dùng
+app.post('/api/register', (req, res) => {
+  const { username, phoneNumber, email, password } = req.body;
 
-  const sql = "INSERT INTO khachhang (TenKH, Email, MK) VALUES (?, ?, ?)";
-  const values = [fullName, email, password];
-
-  connection.query(sql, values, (err, result) => {
-    if (err) {
-      console.error("Lỗi khi chèn dữ liệu vào cơ sở dữ liệu:", err);
-      res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
+  // Kiểm tra xem đã tồn tại người dùng với email này chưa
+  connection.query('SELECT * FROM khachhang WHERE Email = ?', [email], (error, results) => {
+    if (error) {
+      console.error('Lỗi khi kiểm tra người dùng tồn tại:', error);
+      res.status(500).json({ message: 'Lỗi server' });
       return;
     }
-    console.log("Chèn bản ghi mới vào bảng khachhang");
-    res.redirect('/login');
+
+    if (results.length > 0) {
+      // Người dùng đã tồn tại
+      res.status(400).json({ message: 'Người dùng đã tồn tại!' });
+    } else {
+      // Thêm người dùng mới vào cơ sở dữ liệu
+      connection.query('INSERT INTO khachhang (TenKhachHang, SoDT, Email, Password) VALUES (?, ?, ?, ?)', [username, phoneNumber, email, password], (err, results) => {
+        if (err) {
+          console.error('Lỗi khi thêm người dùng mới:', err);
+          res.status(500).json({ message: 'Lỗi server' });
+          return;
+        }
+        res.status(201).json({ message: 'Đăng ký thành công.' });
+      });
+    }
   });
 });
+//route 
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
 
-
-
-
+  // Tìm người dùng trong danh sách
+  const user = users.find(u => u.username === username);
+  if (!user) {
+      return res.status(404).json({ message: 'Người dùng không tồn tại.' });
+  }
+});
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
 });

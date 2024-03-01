@@ -15,78 +15,94 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
     <title>Đăng ký | NgonFresh</title>
     <link rel="icon" type="image/x-icon" href="../images/icon.ico" />
+    <style>
+      .gradient-custom-3 {
+          /* fallback for old browsers */
+          background: #84fab0;
+
+          /* Chrome 10-25, Safari 5.1-6 */
+          background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));
+
+          /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+          background: linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5))
+          }
+          .gradient-custom-4 {
+          /* fallback for old browsers */
+          background: #84fab0;
+
+          /* Chrome 10-25, Safari 5.1-6 */
+          background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1));
+
+          /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+          background: linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1))
+          }
+    </style>
   </head>
   <body>
-    <div class="container mt-5">
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-header text-white">
-              <h3 class="card-title m-0 py-2">ĐĂNG KÝ TÀI KHOẢN</h3>
-            </div>
-            <div class="card-body">
-              <form id="signupForm">
-                <div class="row mb-3">
-                  <div class="col-md-8">
-                    <label for="firstName" class="form-label"
-                      >Họ và tên đệm</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="firstName"
-                      required
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <label for="lastName" class="form-label">Tên</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="lastName"
-                      required
-                    />
-                  </div>
+    <section class="vh-100 bg-image"
+  style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');">
+  <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+    <div class="container h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+          <div class="card" style="border-radius: 15px;">
+            <div class="card-body p-5">
+              <h2 class="text-uppercase text-center mb-5" id="12354">Create an account</h2>
+
+              <form id="registerForm">
+
+                <div class="form-outline mb-4">
+                  <input type="text" id="TenKhachHang" class="form-control form-control-lg" />
+                  <label class="form-label" for="form3Example1cg">Họ Tên</label>
                 </div>
-                <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    id="email"
-                    required
-                  />
+
+                <div class="form-outline mb-4">
+                  <input type="email" id="Email" class="form-control form-control-lg" />
+                  <label class="form-label" for="form3Example3cg"> Email</label>
                 </div>
-                <div class="mb-3">
-                  <label for="password" class="form-label">Mật khẩu</label>
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="password"
-                    required
-                  />
+
+                <div class="form-outline mb-4">
+                  <input type="number" id="SoDT" class="form-control form-control-lg" />
+                  <label class="form-label" for="form3Example4cdg">Số điện thoại</label>
                 </div>
-                <button
-                  type="submit"
-                  class="btn btn-success btn-lg d-block mx-auto"
-                  onclick="SignUpSubmit()"
-                >
-                  HOÀN TẤT
-                </button>
+
+                <div class="form-outline mb-4">
+                  <input type="password" id="Password" class="form-control form-control-lg" />
+                  <label class="form-label" for="form3Example4cg">Password</label>
+                </div>
+
+                
+
+                <div class="form-check d-flex justify-content-center mb-5">
+                  <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3cg" />
+                  <label class="form-check-label" for="form2Example3g">
+                    I agree all statements in <a href="#!" class="text-body"><u>Terms of service</u></a>
+                  </label>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                  <button type="submit"
+                    class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Đăng Ký</button>
+                </div>
+
+                <p class="text-center text-muted mt-5 mb-0">Bạn có có tài khoản rồi ư? <a href="login.html"
+                    class="fw-bold text-body"><u>Đăng nhập đây nè</u></a></p>
+
               </form>
+
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <script
+  </div>
+</section>
+    <script>
       type="text/javascript"
       src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"
-    ></script>
-    <script src="scripts.js"></script>
+    </script>
+   <script src="../backend-frontend.js"></script>
   </body>
 </html>
