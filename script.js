@@ -72,7 +72,9 @@ app.post('/api/login', (req, res) => {
     }
   });
 });
-
+app.get('/api/user', authenticateToken, (req, res) => {
+  res.json({ username: req.user.username });
+});
 // API endpoint để đăng ký người dùng
 app.post('/api/register', (req, res) => {
   const { username, phoneNumber, email, password } = req.body;
