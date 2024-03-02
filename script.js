@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const jwt = require('jsonwebtoken');
 const app = express();
 const port = 5000;
 const users = [];
@@ -72,8 +73,12 @@ app.post('/api/login', (req, res) => {
     }
   });
 });
-app.get('/api/user', authenticateToken, (req, res) => {
-  res.json({ username: req.user.username });
+// Tạo endpoint API để lấy thông tin người dùng sau khi đăng nhập
+app.post('/api/user', (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  res.json({ user: req.user.username });
 });
 // API endpoint để đăng ký người dùng
 app.post('/api/register', (req, res) => {

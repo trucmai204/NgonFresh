@@ -1,9 +1,9 @@
-//đăng nhập
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+// Đăng nhập
+$('#loginForm').submit(async function(event) {
+    event.preventDefault();
 
-    const username = document.getElementById('TenKhachHang').value;
-    const password = document.getElementById('Password').value;
+    const username = $('#TenKhachHang').val();
+    const password = $('#Password').val();
 
     try {
         const response = await fetch('/api/login', {
@@ -24,43 +24,42 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         console.error('Đăng nhập thất bại:', error.message);
     }
 });
+
 // Sau khi đăng nhập thành công, gửi yêu cầu API để lấy thông tin người dùng
 async function getUserInfo() {
-    try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/user', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
-        document.getElementById('userInfo').innerText = `Welcome, ${data.username}!`;
-    } catch (error) {
-        console.error('Lỗi khi lấy thông tin người dùng:', error.message);
-    }
+    fetch('http://localhost:5000/api/user')
+  .then(response => response.json())
+  .then(data => {
+    $('#userInfo').text(`Chào mừng, ${data.username}!`);
+  })
+  .catch(error => {
+    console.log('Lỗi:', error);
+  });
+
+    
 }
+
 
 // Gọi hàm getUserInfo() sau khi đăng nhập thành công
 // Đảm bảo rằng hàm này được gọi sau khi token đã được lưu vào localStorage
 getUserInfo();
 
-//Đăng ký
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+// Đăng ký
+$('#registerForm').submit(async function(event) {
+    event.preventDefault();
 
-    const username = document.getElementById('TenKhachHang').value;
-    const phoneNumber = document.getElementById('SoDT').value;
-    const email = document.getElementById('Email').value;
-    const password = document.getElementById('password').value;
+    const username = $('#TenKhachHang').val();
+    const phoneNumber = $('#SoDT').val();
+    const email = $('#Email').val();
+    const password = $('#password').val();
 
     try {
-        const response = await fetch('/api/register', {
+        const response = await fetch('/api/user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username,phoneNumber, email, password })
+            body: JSON.stringify({ username, phoneNumber, email, password })
         });
         const data = await response.json();
         console.log('Đăng ký thành công:', data.message);
@@ -70,4 +69,3 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         console.error('Đăng ký thất bại:', error.message);
     }
 });
-
