@@ -20,8 +20,9 @@
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
-    "mysql2": "^3.9.1",
-    "sequelize": "^6.37.1"
+    "mysql2": "^3.9.2",
+    "sequelize": "^6.37.1",
+    "sequelize-cli": "^6.6.2"
   },
   "devDependencies": {
     "morgan": "^1.10.0",

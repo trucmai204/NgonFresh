@@ -1,71 +1,70 @@
+var port = 5000;
+const apiEndpoint = "http://localhost:" + port;
+
 // Đăng nhập
-$('#loginForm').submit(async function(event) {
+$("#loginForm").submit(async function(event) {
     event.preventDefault();
-
-    const username = $('#TenKhachHang').val();
-    const password = $('#Password').val();
-
+  
+    const loginData = {
+      email: $("#Email-login").val(),
+      password: $("#Password-login").val(),
+    };
+  
     try {
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        });
-
-        const data = await response.json();
-
-        // Lưu token vào localStorage hoặc sessionStorage để sử dụng sau này
-        localStorage.setItem('token', data.token);
-
-        console.log('Đăng nhập thành công. Token:', data.token);
+      const response = await fetch(apiEndpoint + "/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginData),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log("Login successful:", data);
+  
+      // Redirect user to index.html after successful login
+      window.location.href = "../index.html";
     } catch (error) {
-        console.error('Đăng nhập thất bại:', error.message);
+      console.error("Error during login:", error.message);
+      // Display error message to user
+      alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.");
     }
-});
-
-// Sau khi đăng nhập thành công, gửi yêu cầu API để lấy thông tin người dùng
-async function getUserInfo() {
-    fetch('http://localhost:5000/api/user')
-  .then(response => response.json())
-  .then(data => {
-    $('#userInfo').text(`Chào mừng, ${data.username}!`);
-  })
-  .catch(error => {
-    console.log('Lỗi:', error);
   });
-
-    
-}
-
-
-// Gọi hàm getUserInfo() sau khi đăng nhập thành công
-// Đảm bảo rằng hàm này được gọi sau khi token đã được lưu vào localStorage
-getUserInfo();
-
+  
 // Đăng ký
-$('#registerForm').submit(async function(event) {
-    event.preventDefault();
+$("#registerForm").submit(async function (event) {
+  event.preventDefault();
 
-    const username = $('#TenKhachHang').val();
-    const phoneNumber = $('#SoDT').val();
-    const email = $('#Email').val();
-    const password = $('#password').val();
+  const userData = {
+    TenKhachHang: $("#TenKhachHang").val(),
+    SoDT: $("#SoDT").val(),
+    Email: $("#Email").val(),
+    Password: $("#Password").val(),
+  };
 
-    try {
-        const response = await fetch('/api/user', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, phoneNumber, email, password })
-        });
-        const data = await response.json();
-        console.log('Đăng ký thành công:', data.message);
+  try {
+    const response = await fetch(apiEndpoint + "/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
 
-        // Sau khi đăng ký thành công, chuyển hướng đến trang đăng nhập hoặc thực hiện hành động khác
-    } catch (error) {
-        console.error('Đăng ký thất bại:', error.message);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
+    const data = await response.json();
+    console.log("Registration successful:", data);
+
+    window.location.href = "login.html";
+  } catch (error) {
+    console.error("Error during registration:", error.message);
+    alert("Đăng ký thất bại.");
+  }
 });
